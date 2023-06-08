@@ -17,21 +17,21 @@ public class TeacherController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Teacher>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var teachers = _teacherService.GetAll();
+        var teachers = await _teacherService.GetAll();
         return Ok(teachers);
     }
 
-    [HttpGet("{Id:int}")]
-    public ActionResult<Teacher> GetById(int Id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
     {
-        if (Id <= 0)
+        if (id <= 0)
         {
             return BadRequest();
         }
 
-        var teacher = _teacherService.GetById(Id);
+        var teacher = await _teacherService.GetById(id);
         if (teacher == null)
         {
             return NotFound();
@@ -40,15 +40,15 @@ public class TeacherController : ControllerBase
         return Ok(teacher);
     }
 
-    [HttpGet("{Name:alpha}")]
-    public ActionResult<Teacher> GetByName(string Name)
+    [HttpGet("{name:alpha}")]
+    public async Task<IActionResult> GetByName(string name)
     {
-        if (string.IsNullOrEmpty(Name))
+        if (string.IsNullOrEmpty(name))
         {
             return BadRequest();
         }
 
-        var teacher = _teacherService.GetByName(Name);
+        var teacher = await _teacherService.GetByName(name);
         if (teacher == null)
         {
             return NotFound();
@@ -58,48 +58,29 @@ public class TeacherController : ControllerBase
     }
 
     [HttpPost("insert")]
-    public ActionResult<Teacher> CreateTeacher(Teacher model)
+    public async Task<IActionResult> AddTeacher([FromBody] Teacher model)
     {
-        var teacher = _teacherService.Insert(model);
-        return CreatedAtAction(nameof(GetById), new { id = teacher.Id }, teacher);
+        var result = await _teacherService.Insert(model);
+        return Ok(result);
     }
 
-    [HttpPut("update/{Id}")]
-    public ActionResult UpdateTeacher(int Id, Teacher teacher)
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateTeacher([FromBody] Teacher teacher)
     {
-        if (Id != teacher.Id)
-        {
-            return BadRequest("Teacher ID mismatch.");
-        }
-        
-        try
-        {
-            _teacherService.Update(teacher);
-            return Ok();
-        }
-        catch (ArgumentException ex)
-        {
-            return NotFound(ex.Message);
-        }
+        var result = await _teacherService.Update(teacher);
+        return Ok(result);
     }
 
-    [HttpDelete("{Id}")]
-    public ActionResult<bool> DeleteStudent(int Id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTeacher(int id)
     {
-        if (Id <= 0)
+        if (id <= 0)
         {
             return BadRequest();
         }
 
-        try
-        {
-            _teacherService.Delete(Id);
-            return Ok();
-        }
-        catch
-        {
-            return NotFound();
-        }
+        var result = await _teacherService.Delete(id);
+        return Ok(result);
     }
     
 }

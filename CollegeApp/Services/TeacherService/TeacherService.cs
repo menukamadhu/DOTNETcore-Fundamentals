@@ -1,68 +1,56 @@
 using CollegeApp.Models;
+using CollegeApp.Services.DatabaseService;
 
 namespace CollegeApp.Services.TeacherService;
 
 public class TeacherService : ITeacherService
 {
-    private readonly List<Teacher> _teachers;
+    private readonly IDbService _dbService ;
 
-    public TeacherService()
+    public TeacherService(IDbService dbService)
     {
-        _teachers = CollegeRepository.Teachers;
+        _dbService = dbService;
     }
     
-    public IEnumerable<Teacher> GetAll()
+    public async Task<List<Teacher>> GetAll()
     {
-        return _teachers.ToList();
+        var teachers = await _dbService.GetAll<Teacher>("SELECT * FROM public.teacher", new { });
+        return teachers;
     }
 
-    public Teacher GetById(int Id)
+    public async Task<Teacher> GetById(int id)
     {
-        return _teachers.FirstOrDefault(n => n.Id == Id);
+        var teacher = await _dbService.GetAsync<Teacher>("SELECT * FROM public.teacher WHERE id=@id", new { id });
+        return teacher;
     }
 
-    public Teacher GetByName(string Name)
+    public async Task<Teacher> GetByName(string name)
     {
-        return _teachers.FirstOrDefault(n => n.TeacherName == Name);
+        var teacher = await _dbService.GetAsync<Teacher>("SELECT * FROM public.teacher WHERE name=@name", new { name });
+        return teacher;
     }
 
-    public Teacher Insert(Teacher teacher)
+    public async Task<bool> Insert(Teacher teacher)
     {
-        int NewId = _teachers.Any() ? _teachers.Max(n => n.Id) + 1 : 1;
-
-        Teacher NewTeacher = new Teacher
-        {
-            Id = NewId,
-            TeacherName = teacher.TeacherName,
-            Email = teacher.Email,
-            Address = teacher.Address
-        };
-        
-        _teachers.Add(NewTeacher);
-        return NewTeacher;
+        var result = await _dbService.EditData(
+            "INSERT INTO public.teacher (id,name,email,address) VALUES (@Id, @Name, @Email, @Address)",
+            teacher
+        );
+        return true;
     }
 
-    public void Update(Teacher teacher)
+    public async Task<Teacher> Update(Teacher teacher)
     {
-        var ExistingTeacher = _teachers.FirstOrDefault(n => n.Id == teacher.Id);
-        if (ExistingTeacher == null)
-        {
-            throw new ArgumentException("Teacher not Found");
-        }
-
-        ExistingTeacher.TeacherName = teacher.TeacherName;
-        ExistingTeacher.Email = teacher.Email;
-        ExistingTeacher.Address = teacher.Address;
+        var updateTeacher = await _dbService.EditData(
+            "UPDATE public.teacher SET name=@Name, email=@Email, address=@Address WHERE id=@Id",
+            teacher
+        );
+        return teacher;
     }
 
-    public void Delete(int Id)
+    public async Task<bool> Delete(int id)
     {
-        var teacher = _teachers.FirstOrDefault(n => n.Id == Id);
-        if (teacher == null)
-        {
-            throw new ArgumentException("Teacher not Found");
-        }
-
-        _teachers.Remove(teacher);
+        var deleteTeacher = await _dbService.EditData("DELETE FROM public.teacher WHERE id=@id",new {id});
+        return true;
     }
 }

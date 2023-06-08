@@ -4,10 +4,10 @@ namespace CollegeApp.Services.TeacherService;
 
 public interface ITeacherService
 {
-    IEnumerable<Teacher> GetAll();
-    Teacher GetById(int Id);
-    Teacher GetByName(string Name);
-    Teacher Insert(Teacher teacher);
-    void Update(Teacher teacher);
-    void Delete(int Id);
+    Task<List<Teacher>> GetAll();
+    Task<Teacher> GetById(int id);
+    Task<Teacher> GetByName(string name);
+    Task<bool> Insert(Teacher teacher);
+    Task<Teacher> Update(Teacher teacher);
+    Task<bool> Delete(int id);
 }
