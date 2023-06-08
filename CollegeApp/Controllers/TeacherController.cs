@@ -82,7 +82,7 @@ public class TeacherController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-    
+
     [HttpDelete("{Id}")]
     public ActionResult<bool> DeleteStudent(int Id)
     {
@@ -101,6 +101,5 @@ public class TeacherController : ControllerBase
             return NotFound();
         }
     }
-    
     
 }

@@ -2,71 +2,59 @@ using CollegeApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CollegeApp.Services.DatabaseService;
 
 namespace CollegeApp.Services.StudentService
 {
     public class StudentService : IStudentService
     {
-        private readonly List<Student> _students;
+        private readonly IDbService _dbService;
 
-        public StudentService()
+        public StudentService(IDbService dbService)
         {
-            _students = CollegeRepository.Students;
+            _dbService = dbService;
         }
 
-        public IEnumerable<Student> GetAll()
+        public async Task<List<Student>> GetAll()
         {
-            return _students.ToList();
+            var students = await _dbService.GetAll<Student>("SELECT * FROM public.student", new { });
+            return students;
         }
 
-        public Student GetById(int id)
+        public async Task<Student> GetById(int id)
         {
-            return _students.FirstOrDefault(s => s.Id == id);
+            var student = await _dbService.GetAsync<Student>("SELECT * FROM public.student WHERE id=@id", new { id });
+            return student;
         }
 
-        public Student GetByName(string name)
+        public async Task<Student> GetByName(string name)
         {
-            return _students.FirstOrDefault(s => s.StudentName == name);
+            var student = await _dbService.GetAsync<Student>("SELECT * FROM public.student WHERE name=@name", new { name });
+            return student;
         }
 
-        public Student Insert(Student student)
+        public async Task<bool> Insert(Student student)
         {
-            int newId = _students.Any() ? _students.Max(s => s.Id) + 1 : 1;
-
-            Student newStudent = new Student
-            {
-                Id = newId,
-                StudentName = student.StudentName,
-                Email = student.Email,
-                Address = student.Address
-            };
-
-            _students.Add(newStudent);
-            return newStudent;
+            var result = await _dbService.EditData(
+                "INSERT INTO public.student (id,name,email,address) VALUES (@Id, @Name, @Email, @Address)",
+                student
+            );
+            return true;
         }
 
-        public void Update(Student student)
+        public async Task<Student> Update(Student student)
         {
-            var existingStudent = _students.FirstOrDefault(s => s.Id == student.Id);
-            if (existingStudent == null)
-            {
-                throw new ArgumentException("Student not found.");
-            }
-
-            existingStudent.StudentName = student.StudentName;
-            existingStudent.Address = student.Address;
-            existingStudent.Email = student.Email;
+            var updateStudent = await _dbService.EditData(
+                "UPDATE public.student SET name=@Name, email=@Email, address=@Address WHERE id=@Id",
+                student
+            );
+            return student;
         }
 
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            var student = _students.FirstOrDefault(s => s.Id == id);
-            if (student == null)
-            {
-                throw new ArgumentException("Student not found.");
-            }
-
-            _students.Remove(student);
+            var deleteStudent = await _dbService.EditData("DELETE FROM public.student WHERE id=@id",new {id});
+            return true;
         }
     }
 }

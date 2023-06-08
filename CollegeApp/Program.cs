@@ -1,5 +1,7 @@
+using CollegeApp.Services.DatabaseService;
 using CollegeApp.Services.StudentService;
 using CollegeApp.Services.TeacherService;
+using Dapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddScoped<IDbService, DbService>();
+
+DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var app = builder.Build();
 

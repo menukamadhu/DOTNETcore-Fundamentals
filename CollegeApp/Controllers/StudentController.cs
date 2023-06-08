@@ -21,21 +21,21 @@ namespace CollegeApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Student>> GetStudents()
+        public async Task<IActionResult> GetStudents()
         {
-            var students = _studentService.GetAll();
+            var students = await _studentService.GetAll();
             return Ok(students);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<Student> GetStudentById(int id)
+        public async Task<IActionResult> GetStudentById(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();
             }
 
-            var student = _studentService.GetById(id);
+            var student = await _studentService.GetById(id);
             if (student == null)
             {
                 return NotFound();
@@ -45,14 +45,14 @@ namespace CollegeApp.Controllers
         }
 
         [HttpGet("{name:alpha}")]
-        public ActionResult<Student> GetStudentByName(string name)
+        public async Task<IActionResult> GetStudentByName(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
                 return BadRequest();
             }
 
-            var student = _studentService.GetByName(name);
+            var student = await _studentService.GetByName(name);
             if (student == null)
             {
                 return NotFound();
@@ -62,48 +62,29 @@ namespace CollegeApp.Controllers
         }
 
         [HttpPost("insert")]
-        public ActionResult<Student> CreateStudent(Student model)
+        public async Task<IActionResult> AddStudent([FromBody] Student model)
         {
-            var student = _studentService.Insert(model);
-            return CreatedAtAction(nameof(GetStudentById), new { id = student.Id }, student);
+            var result = await _studentService.Insert(model);
+            return Ok(result);
         }
 
-        [HttpPut("update/{id}")]
-        public ActionResult UpdateStudent(int id, Student student)
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateStudent([FromBody] Student student)
         {
-            if (id != student.Id)
-            {
-                return BadRequest("Student ID mismatch.");
-            }
-
-            try
-            {
-                _studentService.Update(student);
-                return Ok();
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var result = await _studentService.Update(student);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<bool> DeleteStudent(int id)
+        public async Task<IActionResult> DeleteStudent(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();
             }
 
-            try
-            {
-                _studentService.Delete(id);
-                return Ok();
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var result = await _studentService.Delete(id);
+            return Ok(result);
         }
     }
 }

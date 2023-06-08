@@ -30,3 +30,5 @@ D:\Training materials\Fundamentals\CollegeApp\CollegeApp\obj\Debug\net6.0\refint
 D:\Training materials\Fundamentals\CollegeApp\CollegeApp\obj\Debug\net6.0\CollegeApp.pdb
 D:\Training materials\Fundamentals\CollegeApp\CollegeApp\obj\Debug\net6.0\CollegeApp.genruntimeconfig.cache
 D:\Training materials\Fundamentals\CollegeApp\CollegeApp\obj\Debug\net6.0\ref\CollegeApp.dll
+D:\Training materials\Fundamentals\CollegeApp\CollegeApp\bin\Debug\net6.0\Dapper.dll
+D:\Training materials\Fundamentals\CollegeApp\CollegeApp\bin\Debug\net6.0\Npgsql.dll

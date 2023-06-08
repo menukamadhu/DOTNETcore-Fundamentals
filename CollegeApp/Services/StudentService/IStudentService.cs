@@ -4,14 +4,14 @@ namespace CollegeApp.Services.StudentService;
 
 public interface IStudentService
 {
-    IEnumerable<Student> GetAll();
+    Task<List<Student>> GetAll();
 
-    Student GetById(int Id);
+    Task<Student> GetById(int id);
 
-    Student GetByName(string Name);
-    Student Insert(Student student);
+    Task<Student> GetByName(string name);
+    Task<bool> Insert(Student student);
     
-    void Update(Student student);
+    Task<Student> Update(Student student);
     
-    void Delete(int id);
+    Task<bool> Delete(int id);
 }
